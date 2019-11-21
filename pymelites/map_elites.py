@@ -86,6 +86,7 @@ class MAP_Elites:
               better to have a function simulate(x) that outputs both the features and
               the performance (to only do the simulation once).
             - Implement a "recovery" from a "saved file", from a generation description.
+            - Implement a "saving" of cells.
             - Think of the archive -> prior transition.
             - Implement it with CVT.
             - There's an issue with using the patition object as I'm using it: there's confusion
@@ -101,7 +102,7 @@ class MAP_Elites:
         self.centroids_tree = None
         self.solutions = {}
 
-    def create_cells(self, partitions, amount_of_elites=3):
+    def create_cells(self, partition, amount_of_elites=3):
         '''
         TODO: fix this docstring.
 
@@ -115,8 +116,8 @@ class MAP_Elites:
                     "feat_1": (lower_bound, upper_bound, amount_of_cells),
                     ...
                     "feat_n": (lower_bound, upper_bound, amount_of_cells)
-                }, with this partition the cells will be created, each one of
-                them identified by their centroid.
+                }, with this partition the cells will be created in a gridlike
+                fashion, and each one of them identified by their centroid.
             - amount_of_elites: an integer stating how many elites are going to
               be kept for each cell. Each cell can keep multiple elites (which
               can be useful when you want to store a certain amount of high-performing
@@ -130,8 +131,8 @@ class MAP_Elites:
         '''
         # Creating the midpoints
         midpoints = {}
-        for feature, partition in partitions.items():
-            a, b, n = partition
+        for feature, tuple_ in enumerate(partition):
+            a, b, n = tuple_
             h = (b - a)/(n - 1)
             midpoints[feature] = np.linspace(a + (1/2)*h, b - (1/2)*h, n - 1)
 

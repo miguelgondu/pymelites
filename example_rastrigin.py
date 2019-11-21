@@ -68,10 +68,9 @@ map_elites = MAP_Elites(
     simulate=simulate
 )
 
-map_elites.create_cells_CVT(
-    partition=[(-2*np.pi, 2*np.pi, 100*100), (-2*np.pi, 2*np.pi, 100*100)],
-    amount_of_elites=3,
-    samples=25000
+map_elites.create_cells(
+    partition=[(-2*np.pi, 2*np.pi, 75), (-2*np.pi, 2*np.pi, 75)],
+    amount_of_elites=3
 )
 
 # print(map_elites.centroids)
@@ -80,4 +79,4 @@ map_elites.create_cells_CVT(
 # ax.scatter(map_elites.centroids[:, 0], map_elites.centroids[:, 1])
 # plt.show()
 
-map_elites.compute_archive(2500, 100, generation_path='./generations_rastrigin_cvt')
+map_elites.compute_archive(2500, 100, generation_path='.')
