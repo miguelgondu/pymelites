@@ -24,6 +24,7 @@ class Cell:
 
     TODO:
         - being very purists, the elites should be a heap instead of a dict.
+        - TEST the from_dict method here.
     '''
     def __init__(self, centroid, amount_of_elites=3):
         self.centroid = centroid
@@ -66,6 +67,16 @@ class Cell:
         }
 
         return document
+    
+    @classmethod
+    def from_dict(cls, cell_doc, amount_of_elites=3):
+        cell = cls(cell_doc["centroid"], amount_of_elites)
+        cell.solution = cell_doc["solution"]
+        cell.features = cell_doc["features"]
+        cell.performance = cell_doc["performance"]
+        cell.elites = cell_doc["elites"]
+        return cell
+
 
 
 class MAP_Elites:
@@ -104,8 +115,6 @@ class MAP_Elites:
 
     def create_cells(self, partition, amount_of_elites=3):
         '''
-        TODO: fix this docstring.
-
         This function creates the cells for a grid partition of the
         low-dimensional feature space. These will be used to maintain
         the archive once `compute_archive` is used.
@@ -128,6 +137,8 @@ class MAP_Elites:
             - self.centroids: an array with the centroids of all cells.
             - self.centroids_tree: a KDTree built with the centroids for fast
               closest neighbor querying.
+
+        TODO: fix this docstring.
         '''
         # Creating the midpoints
         midpoints = {}
@@ -211,7 +222,7 @@ class MAP_Elites:
             cell.performance = p_prime
             cell.features = b_prime
             self.solutions[cell.centroid] = x_prime
-        
+
         cell.add_to_elites(x_prime, p_prime)
 
     def compute_archive(self, generations, iterations_per_gen, generation_path='.', save_each_gen=True):
