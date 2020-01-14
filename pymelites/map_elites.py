@@ -47,9 +47,12 @@ class Cell:
 
     def to_dict(self):
         # Making ndarray things hashable
-        # TODO: implement a more generic "to_hashable(a)" function.
+        # TODO: Once the generic functions in utils have been implemented, add them here.
         if self.solution is not None:
-            solution = tuple(self.solution)
+            if isinstance(self.solution, list) or isinstance(self.solution, np.ndarray):
+                solution = tuple(self.solution)
+            elif isinstance(self.solution, dict):
+                solution = self.solution
         else:
             solution = None
 
@@ -76,7 +79,6 @@ class Cell:
         cell.performance = cell_doc["performance"]
         cell.elites = cell_doc["elites"]
         return cell
-
 
 
 class MAP_Elites:
@@ -200,6 +202,9 @@ class MAP_Elites:
         print(f"Cells successfully created.")
 
     def get_cell(self, b):
+        # print(f"b: {b}")
+        # print(f"the result of the query: {self.centroids_tree.query(b)}")
+        # print()
         centroid_pos = self.centroids_tree.query(b)[1]
         centroid = self.centroids_tree.data[centroid_pos]
         return self.cells[tuple(centroid)]
@@ -250,7 +255,12 @@ class MAP_Elites:
                     x_prime = self.random_solution()
 
                     # We compute the descriptors and add it to the relevant cell.
-                    self.process_solution(x_prime)
+                    # TODO: this is a hack, remove it when the PCG stuff has been addressed.
+                    try:
+                        self.process_solution(x_prime)
+                    except ValueError:
+                        print(f"Couldn't process genotype {x_prime}. Check your random creators and mutators.")
+                        continue
             # Update loops
             else:
                 for _ in range(iterations_per_gen):
@@ -260,7 +270,12 @@ class MAP_Elites:
                     x_prime = self.random_variation(x)
 
                     # and again we compute the descriptors and add the solution to the relevant cell
-                    self.process_solution(x_prime)
+                    # TODO: this is a hack, remove it when the PCG stuff has been addressed.
+                    try:
+                        self.process_solution(x_prime)
+                    except ValueError:
+                        print(f"Couldn't process genotype {x_prime}. Check your random creators and mutators.")
+                        continue
 
             if save_each_gen:
                 self.write_cells(generation_path + f"/generation_{g:05d}.json")
