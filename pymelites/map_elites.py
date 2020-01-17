@@ -230,7 +230,7 @@ class MAP_Elites:
 
         cell.add_to_elites(x_prime, p_prime)
 
-    def compute_archive(self, generations, iterations_per_gen, generation_path='.', save_each_gen=True):
+    def compute_archive(self, generations, iterations_per_gen, generation_path='.', save_each_gen=True, comment=""):
         '''
         This function computes the archive, which is stored in the self.cells object.
 
@@ -278,10 +278,10 @@ class MAP_Elites:
                         continue
 
             if save_each_gen:
-                self.write_cells(generation_path + f"/generation_{g:05d}.json")
+                self.write_cells(generation_path + f"/generation_{comment}_{g:05d}.json")
 
             if g == generations - 1 and not save_each_gen:
-                self.write_cells(generation_path + f"/generation_{g:05d}.json")
+                self.write_cells(generation_path + f"/generation_{comment}_{g:05d}.json")
 
     def write_cells(self, path):
         '''
