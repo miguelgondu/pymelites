@@ -252,7 +252,14 @@ class MAP_Elites:
             if g == 0:
                 for _ in range(iterations_per_gen):
                     # We get a random genotype.
-                    x_prime = self.random_solution()
+                    # TODO: this is a hack, remove it when the PCG stuff has been addressed.
+                    while True:
+                        try:
+                            x_prime = self.random_solution()
+                            break
+                        except (ValueError, AssertionError):
+                            print("WARNING: There is something wrong with the random solution creator.")
+                            pass
 
                     # We compute the descriptors and add it to the relevant cell.
                     # TODO: this is a hack, remove it when the PCG stuff has been addressed.
