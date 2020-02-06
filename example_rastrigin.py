@@ -17,7 +17,7 @@ For the rastrigin example,
     self.feature_descriptor = project to the first two coordinates.
     self.partition = divide it into a particular grid.
 
-TODO: write random exploration as a benchmark.
+TODO: fix this docstring
 '''
 import numpy as np
 import random

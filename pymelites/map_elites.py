@@ -21,10 +21,6 @@ class Cell:
 
     Cells are usually indexed by their centroid. The centroid acts as an identifier
     in the MAP_Elites self.cells object.
-
-    TODO:
-        - being very purists, the elites should be a heap instead of a dict.
-        - TEST the from_dict method here.
     '''
     def __init__(self, centroid, amount_of_elites=3):
         self.centroid = centroid
@@ -40,13 +36,11 @@ class Cell:
             self.elites[genotype] = performance
         else:
             sorted_items = list(self.elites.items())
-            # print(f"sorted_items: {sorted_items}")
             sorted_items += [(genotype, performance)]
             sorted_items.sort(key=itemgetter(1), reverse=True)
             self.elites = dict(sorted_items[:self.amount_of_elites])
 
     def to_dict(self):
-        # Making ndarray things hashable
         # TODO: Once the generic functions in utils have been implemented, add them here.
         if self.solution is not None:
             if isinstance(self.solution, list) or isinstance(self.solution, np.ndarray):
@@ -93,17 +87,6 @@ class MAP_Elites:
 
         TODO: 
             - expose the amount of elites to maintain. The kwargs are so many though. (!)
-            - Think about parallelizing stuff. (!)
-            - Should I change the implementation of performance and feature_descriptor?,
-              both will be usually computed after a simulation I guess, so it would be
-              better to have a function simulate(x) that outputs both the features and
-              the performance (to only do the simulation once).
-            - Implement a "recovery" from a "saved file", from a generation description.
-            - Implement a "saving" of cells.
-            - Think of the archive -> prior transition.
-            - Implement it with CVT.
-            - There's an issue with using the patition object as I'm using it: there's confusion
-              on what each edge is in the random sampling for CVT.
         '''
         self.random_solution = random_solution
         self.random_selection = random_selection
@@ -172,12 +155,6 @@ class MAP_Elites:
             be kept for each cell. Each cell can keep multiple elites (which
             can be useful when you want to store a certain amount of high-performing
             genotypes in each cell).
-
-        TODO: the partition's "amount of cells" input is redundant here. Think of better
-        ways of implementing it. Maybe a Partition or FeatureSpace object or something.
-
-        TODO: test this.
-        TODO: Implement a cache-ing possibility.
         '''
 
         # Sampling random points and running kmeans

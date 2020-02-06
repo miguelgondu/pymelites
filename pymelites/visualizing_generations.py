@@ -69,11 +69,11 @@ def plot_generations(filepaths, xlims, ylims):
     Output:
         None, but it creates images.
     """
-    filepaths = list(glob.glob('./generation_*.json'))
-    vmin, vmax = get_plot_params(filepaths)
+    files = list(glob.glob(filepaths))
+    vmin, vmax = get_plot_params(files)
 
-    for i, filepath in enumerate(filepaths):
-        print(f"{i+1}/{len(filepaths)}")
+    for i, filepath in enumerate(files):
+        print(f"{i+1}/{len(files)}")
         _plot_generation(
             filepath, xlims=xlims, ylims=ylims,
             vmin=vmin, vmax=vmax
