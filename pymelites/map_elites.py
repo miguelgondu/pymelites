@@ -83,7 +83,7 @@ class MAP_Elites:
         - random_selection(X) grabs an element at random from a set of solutions.
         - random_variation(x) mutates the genotype x.
         - simulate(x) grabs a genotype x and simulates it, recording a low-dimensional feature
-          description and a performance. It should return a tuple (feature_description(x), performance(x)).
+          description and a performance. It should return a tuple (performance(x), feature_description(x)).
 
         TODO: 
             - expose the amount of elites to maintain. The kwargs are so many though. (!)
@@ -193,7 +193,7 @@ class MAP_Elites:
         these are computed, the archive is maintained by adding the solution to the respective
         cell if they are the new elite.
         '''
-        b_prime, p_prime = self.simulate(x_prime)
+        p_prime, b_prime = self.simulate(x_prime)
 
         cell = self.get_cell(b_prime)
         # print(f"cell: {cell}")
