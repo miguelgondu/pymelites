@@ -251,7 +251,15 @@ class MAP_Elites:
                     # Variations to the x_prime.
                     # TODO: the random selection can be sped up by working with a set, right?
                     x = self.random_selection(list(self.solutions.values()))
-                    x_prime = self.random_variation(x)
+                    # TODO: this is a hack, remove it when the PCG stuff has been addressed.
+                    for _ in range(5):
+                        try:
+                            x_prime = self.random_variation(x)
+                            break
+                        except ValueError:
+                            print(f"Couldn't mutate genotype {x}. Check your random creators and mutators.")
+                    else:
+                        continue
 
                     # and again we compute the descriptors and add the solution to the relevant cell
                     # TODO: this is a hack, remove it when the PCG stuff has been addressed.
