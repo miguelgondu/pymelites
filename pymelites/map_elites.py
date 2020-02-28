@@ -22,13 +22,14 @@ class Cell:
     Cells are usually indexed by their centroid. The centroid acts as an identifier
     in the MAP_Elites self.cells object.
     '''
-    def __init__(self, centroid, amount_of_elites=3):
+    def __init__(self, centroid, amount_of_elites=3, metadata={}):
         self.centroid = centroid
         self.solution = None
         self.features = None
         self.performance = None
         self.amount_of_elites = amount_of_elites
         self.elites = {}
+        self.metadata = metadata
 
     def add_to_elites(self, genotype, performance):
         genotype = tuple_to_string(tuple(genotype))
@@ -60,7 +61,8 @@ class Cell:
             "solution": solution,
             "features": features,
             "performance": self.performance,
-            "elites": self.elites
+            "elites": self.elites,
+            "metadata": self.metadata
         }
 
         return document
@@ -186,14 +188,21 @@ class MAP_Elites:
         centroid = self.centroids_tree.data[centroid_pos]
         return self.cells[tuple(centroid)]
 
-    def process_solution(self, x_prime):
+    def process_solution(self, x_prime, metadata={}):
         '''
         In the main body of the MAP-Elites algorithm, a "simulation" is performed to get
         both the feature description of the genotype x_prime and the performance p_prime. Once
         these are computed, the archive is maintained by adding the solution to the respective
         cell if they are the new elite.
         '''
-        p_prime, b_prime = self.simulate(x_prime)
+        _tuple = self.simulate(x_prime)
+        if len(_tuple) == 2:
+            p_prime, b_prime = _tuple
+        elif len(_tuple) == 3:
+            # Player has passed metadata for the cell
+            p_prime, b_prime, metadata = _tuple
+        else:
+            raise RuntimeError("The simulate function should return 2 (p, features) or 3 objects (p, features, metadata).")
 
         cell = self.get_cell(b_prime)
         # print(f"cell: {cell}")
@@ -203,6 +212,7 @@ class MAP_Elites:
             cell.solution = x_prime
             cell.performance = p_prime
             cell.features = b_prime
+            cell.metadata = metadata
             self.solutions[cell.centroid] = x_prime
 
         cell.add_to_elites(x_prime, p_prime)
