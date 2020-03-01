@@ -52,10 +52,14 @@ class Cell:
             solution = None
 
         if self.features is not None:
-            features = tuple(self.features)
+            if isinstance(self.features, list) or isinstance(self.features, np.ndarray):
+                features = tuple(self.features)
+            elif isinstance(self.features, dict):
+                features = self.features
         else:
             features = None
-
+        # print(f"self.features: {self.features}")
+        # print(f"features: {features}")
         document = {
             "centroid": tuple(self.centroid), # This one's not really necessary
             "solution": solution,
@@ -125,20 +129,36 @@ class MAP_Elites:
             - self.centroids_tree: a KDTree built with the centroids for fast
               closest neighbor querying.
 
-        TODO: fix this docstring.
+        TODO: fix this docstring. It's no longer taking a dict, but rather
+        a list of all tuples. With the new feature implementation, it would
+        go back to taking a dict.
         '''
-        # Creating the midpoints
         midpoints = {}
-        for feature, tuple_ in enumerate(partition):
+        for feature, tuple_ in partition.items():
             a, b, n = tuple_
             h = (b - a)/(n - 1)
             midpoints[feature] = np.linspace(a + (1/2)*h, b - (1/2)*h, n - 1)
-
-        centroids = itertools.product(*midpoints.values())
+        midpoints_items = list(midpoints.items())
+        midpoints_items.sort(key=itemgetter(0))
+        midpoint_arrays = [item[1] for item in midpoints_items]
+        centroids = itertools.product(*midpoint_arrays)
         cells = {centroid: Cell(centroid, amount_of_elites) for centroid in centroids}
         self.cells = cells
         self.centroids = np.array(list(self.cells.keys()))
         self.centroids_tree = KDTree(self.centroids)
+
+        # Creating the midpoints
+        # midpoints = {}
+        # for feature, tuple_ in enumerate(partition):
+        #     a, b, n = tuple_
+        #     h = (b - a)/(n - 1)
+        #     midpoints[feature] = np.linspace(a + (1/2)*h, b - (1/2)*h, n - 1)
+
+        # centroids = itertools.product(*midpoints.values())
+        # cells = {centroid: Cell(centroid, amount_of_elites) for centroid in centroids}
+        # self.cells = cells
+        # self.centroids = np.array(list(self.cells.keys()))
+        # self.centroids_tree = KDTree(self.centroids)
     
     def create_cells_CVT(self, partition, amount_of_elites, samples=25000):
         '''
@@ -180,11 +200,25 @@ class MAP_Elites:
         self.cells = cells
         print(f"Cells successfully created.")
 
+    def _get_tuple_from_feature_dict(self, b):
+        # Transforms dict into tuple by considering the keys
+        # in alphabetical order.
+        keys = list(b.keys())
+        keys.sort()
+        return tuple([b[key] for key in keys])
+
     def get_cell(self, b):
-        # print(f"b: {b}")
-        # print(f"the result of the query: {self.centroids_tree.query(b)}")
-        # print()
-        centroid_pos = self.centroids_tree.query(b)[1]
+        """
+        Gets the cell corresponding to features b. Takes a dict
+        or a tuple-like.
+        """
+        if isinstance(b, dict):
+            # Transform it to a tuple-like.
+            b_tuple = self._get_tuple_from_feature_dict(b)
+        else:
+            b_tuple = b
+        # print(b_tuple)
+        centroid_pos = self.centroids_tree.query(b_tuple)[1]
         centroid = self.centroids_tree.data[centroid_pos]
         return self.cells[tuple(centroid)]
 

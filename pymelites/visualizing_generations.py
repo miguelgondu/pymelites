@@ -2,6 +2,7 @@ import json
 import glob
 import matplotlib.pyplot as plt
 import numpy as np
+from operator import itemgetter
 
 def get_name_from_path(filepath):
     return filepath.split("/")[-1].split(".")[0]
@@ -23,9 +24,15 @@ def get_plot_params(filepaths):
 
     return vmin, vmax
 
-def _plot_generation(filepath, xlims=None, ylims=None, vmin=None, vmax=None):
+def _plot_generation(filepath, partitions=None, xlims=None, ylims=None, vmin=None, vmax=None):
     with open(filepath) as fp:
         generation = json.load(fp)
+
+    if xlims is None and ylims is None:
+        partitions_items = list(partitions.items())
+        partitions_items.sort(key=itemgetter(0))
+        xlims = partitions_items[0][1][:2]
+        ylims = partitions_items[1][1][:2]
     
     points = np.zeros((len(generation), 2))
     colors = np.zeros(len(generation))
@@ -47,6 +54,9 @@ def _plot_generation(filepath, xlims=None, ylims=None, vmin=None, vmax=None):
     scatter = ax.scatter(points[:, 0], points[:, 1], c=colors, vmin=vmin, vmax=vmax)
     ax.set_xlim(xlims)
     ax.set_ylim(ylims)
+    if partitions is not None:
+        ax.set_xlabel(partitions_items[0][0])
+        ax.set_ylabel(partitions_items[1][0])
     plt.colorbar(scatter)
 
     title = get_name_from_path(filepath).replace("_", " ")
@@ -55,7 +65,7 @@ def _plot_generation(filepath, xlims=None, ylims=None, vmin=None, vmax=None):
     # plt.show()
     plt.close()
 
-def plot_generations(filepaths, xlims, ylims):
+def plot_generations(filepaths, partitions=None, xlims=None, ylims=None):
     """
     This function takes an iterable with the paths of
     the generation_{d}.json outputted by the MAP_Elites
@@ -64,17 +74,17 @@ def plot_generations(filepaths, xlims, ylims):
 
     Input:
         - filepaths
-        - xlims
-        - ylims
+        - partitions.
     Output:
         None, but it creates images.
     """
     files = list(glob.glob(filepaths))
     vmin, vmax = get_plot_params(files)
 
+
     for i, filepath in enumerate(files):
         print(f"{i+1}/{len(files)}")
         _plot_generation(
-            filepath, xlims=xlims, ylims=ylims,
+            filepath, partitions=partitions, xlims=xlims, ylims=ylims,
             vmin=vmin, vmax=vmax
         )

@@ -24,6 +24,7 @@ import random
 import matplotlib.pyplot as plt
 
 from pymelites.map_elites import MAP_Elites
+from pymelites.visualizing_generations import plot_generations
 
 DIMENSIONS = 6
 A = 10
@@ -53,12 +54,16 @@ def feature_descriptor(x):
 def simulate(x):
     p = performance(x)
     features = x[:2]
-    return features, p
+    features = {
+        "feature_a": features[0],
+        "feature_b": features[1]
+    }
+    return p, features
 
 
 partitions = {
-    "x1": (-2*np.pi, 2*np.pi, 100),
-    "x2": (-2*np.pi, 2*np.pi, 100)
+    "feature_a": (-2*np.pi, 2*np.pi, 100),
+    "feature_b": (-np.pi, 3*np.pi, 100)
 }
 
 map_elites = MAP_Elites(
@@ -69,7 +74,7 @@ map_elites = MAP_Elites(
 )
 
 map_elites.create_cells(
-    partition=[(-2*np.pi, 2*np.pi, 75), (-2*np.pi, 2*np.pi, 75)],
+    partition=partitions,
     amount_of_elites=3
 )
 
@@ -79,4 +84,5 @@ map_elites.create_cells(
 # ax.scatter(map_elites.centroids[:, 0], map_elites.centroids[:, 1])
 # plt.show()
 
-map_elites.compute_archive(2500, 100, generation_path='.')
+map_elites.compute_archive(2, 100, generation_path='.')
+plot_generations("./generation_*.json", partitions=partitions)
