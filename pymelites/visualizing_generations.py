@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from operator import itemgetter
 
+from pymelites.aggregating_generations import aggregate_generation
+
 def get_name_from_path(filepath):
     return filepath.split("/")[-1].split(".")[0]
 
@@ -37,14 +39,10 @@ def _plot_generation(filepath, partition=None, vmin=None, vmax=None):
     xlims = partition_items[0][1][:2]
     ylims = partition_items[1][1][:2]
 
-    points = np.zeros((len(generation), 2))
-    colors = np.zeros(len(generation))
-
-    i = 0
-    for doc in generation.values():
+    point_color = {}
+    for k, doc in generation.items():
         if doc["performance"] is None:
-            np.delete(points, i, axis=0)
-            np.delete(colors, i)
+            continue
         else:
             if isinstance(doc["features"], (list, tuple, np.ndarray)):
                 index_x, index_y = key_x, key_y
@@ -59,10 +57,23 @@ def _plot_generation(filepath, partition=None, vmin=None, vmax=None):
                 index_x, index_y = keys.index(key_x), keys.index(key_y)
             else:
                 raise RuntimeError(f"Features is of unexpected type {type(doc['features'])}")
-            points[i, :] = (doc["centroid"][index_x], doc["centroid"][index_y])
-            colors[i] = doc["performance"]
-            i += 1
-    
+
+            point = (doc["centroid"][index_x], doc["centroid"][index_y])
+            color = doc["performance"]
+            if point not in point_color:
+                point_color[point] = color
+            
+            if point_color[point] < color:
+                point_color[point] = color
+
+    points = []
+    colors = []
+    for point, color in point_color.items():
+        points.append(point)
+        colors.append(color)
+    points = np.array(points)
+    colors = np.array(colors)
+
     _, ax = plt.subplots(1, 1, figsize=(10, 10))
     scatter = ax.scatter(points[:, 0], points[:, 1], c=colors, vmin=vmin, vmax=vmax)
     ax.set_xlim(xlims)
