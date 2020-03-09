@@ -268,14 +268,17 @@ class MAP_Elites:
             # TODO: this should be better worded, or better implemented.
             raise ValueError("Cells is None. Please run create_cells or create_cells_CVT first.")
         for g in range(generations):
+            print(f"="*80)
             print(f"Generation: {g}")
             # Initialization
             if initial_iterations is None:
                 initial_iterations = iterations_per_gen
             if g == 0:
-                for _ in range(initial_iterations):
+                for it in range(initial_iterations):
                     # We get a random genotype.
-                    # TODO: this is a hack, remove it when the PCG stuff has been addressed.
+                    # TODO: this is a hack, remove it when the PCG stuff has been addressed
+                    print(f"-"*80)
+                    print(f"Iteration: {it}")
                     while True:
                         try:
                             x_prime = self.random_solution()
@@ -293,9 +296,11 @@ class MAP_Elites:
                         continue
             # Update loops
             else:
-                for _ in range(iterations_per_gen):
+                for it in range(iterations_per_gen):
                     # Variations to the x_prime.
                     # TODO: the random selection can be sped up by working with a set, right?
+                    print(f"-"*80)
+                    print(f"Iteration: {it}")
                     x = self.random_selection(list(self.solutions.values()))
                     # TODO: this is a hack, remove it when the PCG stuff has been addressed.
                     for _ in range(5):
