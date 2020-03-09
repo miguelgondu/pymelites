@@ -251,7 +251,7 @@ class MAP_Elites:
 
         cell.add_to_elites(x_prime, p_prime)
 
-    def compute_archive(self, generations, iterations_per_gen, generation_path='.', save_each_gen=True, comment=""):
+    def compute_archive(self, generations, iterations_per_gen, initial_iterations=None, generation_path='.', save_each_gen=True, comment=""):
         '''
         This function computes the archive, which is stored in the self.cells object.
 
@@ -270,8 +270,10 @@ class MAP_Elites:
         for g in range(generations):
             print(f"Generation: {g}")
             # Initialization
+            if initial_iterations is None:
+                initial_iterations = iterations_per_gen
             if g == 0:
-                for _ in range(iterations_per_gen):
+                for _ in range(initial_iterations):
                     # We get a random genotype.
                     # TODO: this is a hack, remove it when the PCG stuff has been addressed.
                     while True:
