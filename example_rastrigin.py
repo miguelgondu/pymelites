@@ -1,23 +1,23 @@
 '''
-In this script, I test my MAP_elites implementation on the 6D-Rastrigin.
+In this script, I test my MAP_elites implementation on
+the 6D-Rastrigin.
 
-In general, you'll need to provide the MAP_Elites object the following functions:
-    self.random_solution = random_solution
-    self.random_selection = random_selection
-    self.random_variation = random_variation
-    self.performance = performance
-    self.feature_descriptor = feature_descriptor
-    self.partition = partition
+In general, you'll need to provide the MAP_Elites object
+the following functions:
+    - random_solution() -> x, your genotypes (which could
+      be (almost) whatever you want).
+    - random_selection(archive) -> x, a way of selecting
+      randomly from a list. Usually random.choice will
+      do the trick.
+    - random_variation(x) -> x', your way of mutating
+      genotypes.
+    - simulate(x) -> (p, f, meta), a function that
+      simulates a genotype x and returns its performance
+      p, its behavioral features f and optionally a metadata
+      dictionary that will be stored in the cells.
 
-For the rastrigin example,
-    self.random_solution = a random sample from the -2\pi, 2\pi hypercube.
-    self.random_selection = random.choice I guess.
-    self.random_variation = Gaussian noise.
-    self.performance = the actual rastrigin function.
-    self.feature_descriptor = project to the first two coordinates.
-    self.partition = divide it into a particular grid.
-
-TODO: fix this docstring
+In what follows you'll see example implementations of these
+functions.
 '''
 import numpy as np
 import random

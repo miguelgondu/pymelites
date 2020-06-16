@@ -1,10 +1,16 @@
+"""
+This script contains utilities for visualizing
+the generations created by the compute_archive
+function of MAP_Elites objects.
+
+WARNING: It hasn't been implemented for Windows.
+"""
+
 import json
 import glob
 import matplotlib.pyplot as plt
 import numpy as np
 from operator import itemgetter
-
-from pymelites.aggregating_generations import aggregate_generation
 
 def get_name_from_path(filepath):
     return filepath.split("/")[-1].split(".")[0]
