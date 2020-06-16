@@ -8,7 +8,9 @@ See:
     https://gitlab.inria.fr/resibots/public/py_map_elites
 '''
 import itertools
+from pathlib import Path
 import json
+
 import numpy as np
 
 from scipy.spatial import KDTree
@@ -268,7 +270,7 @@ class MAP_Elites:
 
         cell.add_to_elites(x_prime, p_prime)
 
-    def compute_archive(self, generations, iterations_per_gen, initial_iterations=None, generation_path='.', save_each_gen=True, comment=""):
+    def compute_archive(self, generations, iterations_per_gen, initial_iterations=None, generation_path='.', save_each_gen=True, comment="", verbose=True):
         '''
         This function computes the archive, which is stored
         in the self.cells object.
@@ -302,9 +304,12 @@ class MAP_Elites:
         if self.cells is None:
             # TODO: this should be better worded, or better implemented.
             raise ValueError("Cells is None. Please run create_cells or create_cells_CVT first.")
+    
+        generation_path = Path(generation_path)
         for g in range(generations):
-            print(f"="*80)
-            print(f"Generation: {g}")
+            if verbose:
+                print(f"="*80)
+                print(f"Generation: {g}")
 
             # Initialization loops
             if initial_iterations is None:
@@ -312,8 +317,9 @@ class MAP_Elites:
             if g == 0:
                 for it in range(initial_iterations):
                     # We get a random genotype.
-                    print(f"-"*80)
-                    print(f"Iteration: {it}")
+                    if verbose:
+                        # print(f"-"*80)
+                        print(f"Iteration: {it}", end="\r", flush=True)
                     while True:
                         try:
                             x_prime = self.random_solution()
@@ -334,8 +340,9 @@ class MAP_Elites:
             else: # g > 0
                 for it in range(iterations_per_gen):
                     # Variations to the x_prime.
-                    print(f"-"*80)
-                    print(f"Iteration: {it}")
+                    if verbose:
+                        # print(f"-"*80)
+                        print(f"Iteration: {it}", end="\r", flush=True)
                     x = self.random_selection(list(self.solutions.values()))
 
                     # Attempts to mutate a genotype 5 different times.
@@ -360,12 +367,12 @@ class MAP_Elites:
 
             if save_each_gen:
                 self.write_cells(
-                    generation_path + f"/generation_{comment}_{g:09d}.json"
+                    generation_path / f"generation_{comment}_{g:09d}.json"
                 )
 
             if g == generations - 1 and not save_each_gen:
                 self.write_cells(
-                    generation_path + f"/generation_{comment}_{g:09d}.json"
+                    generation_path / f"generation_{comment}_{g:09d}.json"
                 )
 
     def write_cells(self, path):

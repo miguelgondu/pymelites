@@ -89,7 +89,7 @@ def _plot_generation(filepath, partition=None, vmin=None, vmax=None):
     # plt.show()
     plt.close()
 
-def plot_generations(filepaths, partition=None):
+def plot_generations(filepaths, partitions=None):
     """
     This function takes an iterable with the paths of
     the generation_{d}.json outputted by the MAP_Elites
@@ -105,8 +105,9 @@ def plot_generations(filepaths, partition=None):
     files = list(glob.glob(filepaths))
     vmin, vmax = get_plot_params(files)
 
+    print("Plotting generations:")
     for i, filepath in enumerate(files):
-        print(f"{i+1}/{len(files)}")
+        print(f"{i+1}/{len(files)}", end="\r", flush=True)
         _plot_generation(
-            filepath, partition=partition, vmin=vmin, vmax=vmax
+            filepath, partition=partitions, vmin=vmin, vmax=vmax
         )

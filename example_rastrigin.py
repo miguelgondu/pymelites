@@ -84,5 +84,5 @@ map_elites.create_cells(
 # ax.scatter(map_elites.centroids[:, 0], map_elites.centroids[:, 1])
 # plt.show()
 
-map_elites.compute_archive(2, 100, generation_path='.')
+map_elites.compute_archive(100, 100, generation_path='.')
 plot_generations("./generation_*.json", partitions=partitions)
