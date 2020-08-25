@@ -78,11 +78,21 @@ map_elites.create_cells(
     amount_of_elites=3
 )
 
-# print(map_elites.centroids)
+# map_elites.compute_archive(10, 10000, comment="original", generation_path='.')
 
-# _, ax = plt.subplots(1, 1)
-# ax.scatter(map_elites.centroids[:, 0], map_elites.centroids[:, 1])
-# plt.show()
+map_elites_alt = MAP_Elites(
+    random_solution=random_solution,
+    random_selection=random_selection,
+    random_variation=random_variation,
+    simulate=simulate,
+    goal=-100
+)
 
-map_elites.compute_archive(10, 10000, generation_path='.')
+map_elites_alt.create_cells(
+    partition=partitions,
+    amount_of_elites=3
+)
+
+map_elites_alt.compute_archive(10, 10000, comment="opt_for_minus_hundred", generation_path='.')
 plot_generations("./generation_*.json", partitions=partitions)
+

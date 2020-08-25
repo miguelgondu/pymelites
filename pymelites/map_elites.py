@@ -27,7 +27,7 @@ class Cell:
     Cells are usually indexed by their centroid. The centroid acts as
     an identifier in the MAP_Elites self.cells object.
     '''
-    def __init__(self, centroid, amount_of_elites=3, metadata={}):
+    def __init__(self, centroid, amount_of_elites=3, metadata={}, goal=None):
         self.centroid = centroid
         self.solution = None
         self.features = None
@@ -35,6 +35,13 @@ class Cell:
         self.amount_of_elites = amount_of_elites
         self.elites = {}
         self.metadata = metadata
+        self.goal = goal
+
+    def _objective(self, p):
+        if self.goal is None:
+            return p
+        else:
+            return - np.abs(p - self.goal)
 
     def add_to_elites(self, genotype, performance):
         """
@@ -47,7 +54,7 @@ class Cell:
             self.elites[genotype] = performance
         else:
             sorted_items = list(self.elites.items())
-            sorted_items += [(genotype, performance)]
+            sorted_items += [(genotype, self._objective(performance))]
             sorted_items.sort(key=itemgetter(1), reverse=True)
             self.elites = dict(sorted_items[:self.amount_of_elites])
 
@@ -62,7 +69,8 @@ class Cell:
             "features": solution's features (tuple or dict),
             "performance": solution's performance (number-like),
             "elites": an archive of the best elites (dict),
-            "metadata": metadata passed by simulate (yours to define)
+            "metadata": metadata passed by simulate (yours to define),
+            "goal": the goal (performance aiming for this)
         }
         """
         # TODO: Once the generic functions for serializing
@@ -89,7 +97,8 @@ class Cell:
             "features": features,
             "performance": self.performance,
             "elites": self.elites,
-            "metadata": self.metadata
+            "metadata": self.metadata,
+            "goal": self.goal
         }
 
         return document
@@ -101,11 +110,13 @@ class Cell:
         cell.features = cell_doc["features"]
         cell.performance = cell_doc["performance"]
         cell.elites = cell_doc["elites"]
+        cell.metadata = cell_doc["metadata"]
+        cell.goal = cell_doc["goal"]
         return cell
 
 
 class MAP_Elites:
-    def __init__(self, random_solution, random_selection, random_variation, simulate):
+    def __init__(self, random_solution, random_selection, random_variation, simulate, goal=None):
         '''
         The initialization of a MAP_Elites object. It takes as input
         - random_solution() returns a random "genotype".
@@ -118,14 +129,23 @@ class MAP_Elites:
           a tuple (performance(x), features(x), metadata(x)). This
           metadata will be stored in the cell for the best performing
           solution (genotype).
+        - goal (optional) specifices a target performance to aim to.
+          (in some experiments, we don't want to maximize performance,
+          but rather aim for a performance that is close to a goal). If
+          this goal is None, the goal turns to maximizing performance.
 
-          The features(x) should return a dict {feature: value} with the
+          features(x) should return a dict {feature: value} with the
           same features as the partition specified while creating cells.
         '''
         self.random_solution = random_solution
         self.random_selection = random_selection
         self.random_variation = random_variation
         self.simulate = simulate
+
+        if goal is not None:
+            assert isinstance(goal, (float, int)), "Goal must be float or int."
+        self.goal = goal
+
         self.partition = None
         self.cells = None
         self.centroids = None
@@ -167,11 +187,11 @@ class MAP_Elites:
         midpoints_items.sort(key=itemgetter(0))
         midpoint_arrays = [item[1] for item in midpoints_items]
         centroids = itertools.product(*midpoint_arrays)
-        cells = {centroid: Cell(centroid, amount_of_elites) for centroid in centroids}
+        cells = {centroid: Cell(centroid, amount_of_elites, goal=self.goal) for centroid in centroids}
         self.cells = cells
         self.centroids = np.array(list(self.cells.keys()))
         self.centroids_tree = KDTree(self.centroids)
-    
+
     def create_cells_CVT(self, partition, amount_of_elites, samples=25000):
         '''
         This function creates the cells for a CVT partition of the
@@ -233,13 +253,23 @@ class MAP_Elites:
             b_tuple = self._get_tuple_from_feature_dict(b)
         else:
             b_tuple = b
-        
+
         # Queries the KDTree for the closest centroid in
         # the grid defined by the partition, and returns
         # the respective cell.
         centroid_pos = self.centroids_tree.query(b_tuple)[1]
         centroid = self.centroids_tree.data[centroid_pos]
         return self.cells[tuple(centroid)]
+
+    def _objective(self, r):
+        """
+        Returns r if there's no goal, otherwise it returns
+        the distance to the goal times -1 (because we're maximizing).
+        """
+        if self.goal is None:
+            return r
+        else:
+            return - np.abs(r - self.goal)
 
     def process_solution(self, x_prime, metadata={}):
         '''
@@ -261,7 +291,8 @@ class MAP_Elites:
         cell = self.get_cell(b_prime)
         # Update the cell's attributes &
         # Maintain the list of current solutions
-        if cell.solution is None or cell.performance < p_prime:
+        obj_prime = self._objective(p_prime)
+        if cell.solution is None or self._objective(cell.performance) < obj_prime:
             cell.solution = x_prime
             cell.performance = p_prime
             cell.features = b_prime
