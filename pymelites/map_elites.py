@@ -361,11 +361,13 @@ class MAP_Elites:
 
                     # We compute the descriptors and add them
                     # to the relevant cell.
-                    try:
-                        self.process_solution(x_prime)
-                    except ValueError:
-                        print(f"Couldn't process genotype {x_prime}. Check your random creators and mutators.")
-                        continue
+                    # try:
+                    #     self.process_solution(x_prime)
+                    # except ValueError as e:
+                    #     print(f"Couldn't process genotype {x_prime}. Check your random creators and mutators.")
+                    #     print(e)
+                    #     continue
+                    self.process_solution(x_prime)
 
             # Update loops
             else: # g > 0
