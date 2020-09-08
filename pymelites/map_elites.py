@@ -288,6 +288,10 @@ class MAP_Elites:
         else:
             raise RuntimeError("The simulate function should return (p, features) or (p, features, metadata).")
 
+        if p_prime is None:
+            print("Performance was none. Ignoring this simulation.")
+            return
+
         cell = self.get_cell(b_prime)
         # Update the cell's attributes &
         # Maintain the list of current solutions
