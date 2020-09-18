@@ -1,6 +1,7 @@
 '''
 In this script, I test my MAP_elites implementation on
-the 6D-Rastrigin.
+the 6D-Rastrigin. See more at
+https://en.wikipedia.org/wiki/Rastrigin_function
 
 In general, you'll need to provide the MAP_Elites object
 the following functions:
@@ -78,21 +79,26 @@ map_elites.create_cells(
     amount_of_elites=3
 )
 
-# map_elites.compute_archive(10, 10000, comment="original", generation_path='.')
+map_elites.compute_archive(10, 10000, comment="original", generation_path='.')
 
-map_elites_alt = MAP_Elites(
-    random_solution=random_solution,
-    random_selection=random_selection,
-    random_variation=random_variation,
-    simulate=simulate,
-    goal=-100
-)
+"""
+What follows is another example in which you can aim
+for a certain target performance (instead of maximizing).
+"""
 
-map_elites_alt.create_cells(
-    partition=partitions,
-    amount_of_elites=3
-)
+# map_elites_alt = MAP_Elites(
+#     random_solution=random_solution,
+#     random_selection=random_selection,
+#     random_variation=random_variation,
+#     simulate=simulate,
+#     goal=-100
+# )
 
-map_elites_alt.compute_archive(10, 10000, comment="opt_for_minus_hundred", generation_path='.')
-plot_generations("./generation_*.json", partitions=partitions)
+# map_elites_alt.create_cells(
+#     partition=partitions,
+#     amount_of_elites=3
+# )
+
+# map_elites_alt.compute_archive(10, 10000, comment="opt_for_minus_hundred", generation_path='.')
+# plot_generations("./generation_*.json", partitions=partitions)
 

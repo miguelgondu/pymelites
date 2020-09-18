@@ -212,8 +212,6 @@ class MAP_Elites:
         '''
 
         # Sampling random points and running kmeans
-        # TODO: being purists, amount_of_cells can be computed in the one
-        # linear search being performed below.
         amount_of_cells = max([tuple_[2] for tuple_ in partition])
         feature_space_dim = len(partition)
         # print(f"Sampling {samples} for the CVT creation.")
@@ -333,7 +331,7 @@ class MAP_Elites:
 
         TODO:
             - change the amount of zeros in the saving of the file dynamically given 'generations'
-            - Implement parallelization
+            - Implement parallelization (what's the best way around this?)
             - make the generation path OS-independent.
         '''
         if self.cells is None:
@@ -378,7 +376,6 @@ class MAP_Elites:
                 for it in range(iterations_per_gen):
                     # Variations to the x_prime.
                     if verbose:
-                        # print(f"-"*80)
                         print(f"Iteration: {it}", end="\r", flush=True)
                     x = self.random_selection(list(self.solutions.values()))
 
