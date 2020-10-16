@@ -2,6 +2,27 @@
 
 This package contains a Python implementation of [the MAP-Elites evolutionary algorithm](https://arxiv.org/pdf/1504.04909.pdf), inspired on [the original pymap_elites package](https://gitlab.inria.fr/resibots/public/py_map_elites) developed by JB Mouret and his lab.
 
+## Installing
+
+`pymelites` was written in Python >3.6. Clone this repo and go into it
+
+```
+git clone ...
+cd pymelites
+```
+
+Install the dependencies using
+
+```
+pip install -r requirements.txt
+```
+
+and also install the package (in editor mode for debugging)
+
+```
+pip install -e .
+```
+
 ## Usage
 
 ### Implementing the evolution
