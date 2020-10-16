@@ -75,6 +75,15 @@ map_elites.compute_archive(10, 10000, comment="some_comment", generation_path='.
 
 This also takes a `generation_path`, the path in which your generations will be stored, and a `comment` that will go into the generation's name like this: `{generation_path}/generation_{comment}_{generation_number}.json`.
 
-## An example
+### An example
 
 To see an example of how to implement these functions and define the behavior space, check the `example_rastrigin.py` file.
+
+## Related research
+
+This implementation has been used in:
+- [Finding Game Levels with the Right Difficulty in a few Trials through Intelligent Trial-and-Error](https://arxiv.org/pdf/2005.07677.pdf) by myself alongside Rasmus Berg Palm, David Ha and Sebastian Risi.
+
+## Licence
+
+This code is open source under the [MIT License](https://opensource.org/licenses/MIT).
