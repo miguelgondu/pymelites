@@ -22,7 +22,6 @@ functions.
 '''
 import numpy as np
 import random
-import matplotlib.pyplot as plt
 
 from pymelites.map_elites import MAP_Elites
 from pymelites.visualizing_generations import plot_generations
@@ -80,25 +79,5 @@ map_elites.create_cells(
 )
 
 map_elites.compute_archive(10, 10000, comment="original", generation_path='.')
-
-"""
-What follows is another example in which you can aim
-for a certain target performance (instead of maximizing).
-"""
-
-# map_elites_alt = MAP_Elites(
-#     random_solution=random_solution,
-#     random_selection=random_selection,
-#     random_variation=random_variation,
-#     simulate=simulate,
-#     goal=-100
-# )
-
-# map_elites_alt.create_cells(
-#     partition=partitions,
-#     amount_of_elites=3
-# )
-
-# map_elites_alt.compute_archive(10, 10000, comment="opt_for_minus_hundred", generation_path='.')
+# Uncomment this line to plot the generations.
 # plot_generations("./generation_*.json", partitions=partitions)
-
