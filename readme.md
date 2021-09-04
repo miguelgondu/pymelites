@@ -82,7 +82,7 @@ To see an example of how to implement these functions and define the behavior sp
 ## Related research
 
 This implementation has been used in:
-- [Finding Game Levels with the Right Difficulty in a few Trials through Intelligent Trial-and-Error](https://arxiv.org/pdf/2005.07677.pdf) by myself alongside Rasmus Berg Palm, David Ha and Sebastian Risi.
+- [Finding Game Levels with the Right Difficulty in a few Trials through Intelligent Trial-and-Error](https://arxiv.org/pdf/2005.07677.pdf) by myself alongside Rasmus Berg Palm, David Ha and Sebastian Risi. [Check the code here](https://github.com/miguelgondu/finding_game_levels_paper).
 
 ## Licence
 
